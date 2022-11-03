@@ -1,7 +1,6 @@
 
-export const HomePageImage = ()=>{
-    
+export function HomePageImage(){
     
 
-    return <div> <></></div>
+    return <div></div>
 }
