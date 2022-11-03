@@ -9,6 +9,9 @@
     "sass": "^1.55.0"
   },
   "scripts": {
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start"
  }
 }
