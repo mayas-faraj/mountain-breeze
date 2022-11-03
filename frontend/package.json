@@ -1,14 +1,21 @@
 {
   "dependencies": {
-    "eslint-config-next": "^13.0.1",
     "next": "^13.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/material": "^5.10.12",
     "sass": "^1.55.0"
   },
   "scripts": {
-    "lint": "next lint"
- }
+    "lint": "next lint",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  }
 }
