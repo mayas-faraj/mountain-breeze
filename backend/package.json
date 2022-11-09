@@ -1,0 +1,27 @@
+{
+  "name": "mountain-breeze-backend",
+  "version": "0.1.0",
+  "description": "nodejs project to create backend system using prisma",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://5.134.255.89/mayas-faraj/mountain-breeze-backend"
+  },
+  "author": "Mayas Faraj",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@prisma/client": "^4.5.0",
+    "express": "^4.18.2",
+    "prisma": "^4.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.27.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.0",
+    "eslint-plugin-promise": "^6.1.1"
+  }
+}
