@@ -56,9 +56,10 @@ const MainMenu = (props)=>{
               <IconButton aria-label="nav" size="large" onClick={()=>{setOpen(true)}}>
                 <MenuIcon fontSize="large" sx={{color: props.color}}/>
               </IconButton>
-              <Drawer open={open}  containerStyle={styles.drawer} anchor={"left"} onClose={() => setOpen(false)}>
+              <Drawer open={open}  PaperProps={{ sx: { color:"red" , width: "1000px" , backgroundColor : "black"} }} anchor={"left"} onClose={() => setOpen(false)}>
                 <MainList data={data}/>
               </Drawer>
+              
           </div> ;
 }
 
