@@ -1,11 +1,13 @@
-import NavBar from "./UI/NavBar"
+import NavBar from "./NavBar";
 import Contact from "./Contact"
 
-export default function Layout({ children }) {
+const Layout = ({ children }) => {
     return (<>
-          <NavBar/>
+          <NavBar />
           {children}
           <Contact/>
           </>
     );
-  }
+}
+
+  export default Layout;
