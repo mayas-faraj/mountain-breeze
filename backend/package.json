@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "description": "nodejs project to create backend system using prisma",
   "main": "server.js",
+  "prisma": {
+    "seed": "node prisma/seeder.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed" : "prisma db seed",
+    "mig" : "prisma migrate dev"
   },
   "repository": {
     "type": "git",
