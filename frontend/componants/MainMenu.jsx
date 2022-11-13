@@ -2,7 +2,6 @@ import React, { useState, useReducer } from "react"
 import { Drawer, List,ListItem,ListItemButton, ListItemText, IconButton, Collapse} from "@mui/material";
 import { Menu as MenuIcon , ExpandLess , ExpandMore } from '@mui/icons-material/'
 import useFetch from "../custom_hooks/useFetch"
-import styles from "../style/MainMenu.module.scss"
 
 const MainList = (props)=>{
   const [Openstates , dispath ] = useReducer( (state, index) => { return state ^ (1 << index);} , 0)
