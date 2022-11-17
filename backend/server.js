@@ -10,22 +10,33 @@ const app = express();
 // define ql-schema
 let schema = buildSchema(`
   type Query {
-    hello: String
+    setting: Setting!
+  }
+
+  type Setting {
+    key(name:String): String!
+    value: String
+    info: Info
+  }
+
+  type Info {
+    creator: String
+    date: String
   }
 `);
 
-let root = { hello:()=>'Hello world' };
+let root = { setting:(args)=>({key: "k0", value: JSON.stringify(args), info: {creator: "c1", date: "now"}}) };
 
 // routing
 app.get("/", (req, res) =>
   res.status(200).json({ message: "connection to server success" })
 );
 
-app.use('/graphql', graphqlHTTP({
+app.use('/graphql-api', graphqlHTTP({
   schema: schema,
   rootValue: root,
   graphiql: true
 }));
 
 // start app
-app.listen(3000, () => console.log("server started at: http://localhost:3000/graphql"));
+app.listen(3000, () => console.log("server started at: http://localhost:3000/graphql-api"));
