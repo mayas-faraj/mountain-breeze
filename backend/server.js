@@ -1,18 +1,43 @@
-//import modules
+//apollo
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require( '@apollo/server/express4');
+const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer');
+const http = require( 'http');
+const cors = require( 'cors' );
+const { json } = require( 'body-parser');
+const typeDefs = require( './schema/typeDefs');
+const resolvers = require( './schema/resolver');
+
+
+//Express Server
 const express = require("express");
-const db = require("db");
+const dotenv = require('dotenv');
+dotenv.config()
+const Port = process.env.ServerPort;
+
 
 //create app
-const app = express();
+async function StartSever(){
+  const app = express();
+  const httpServer = http.createServer(app);
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  });
+  await server.start();
+  app.use(
+    '/graphql',
+    cors(),
+    json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => ({ token: req.headers.token , language: req.headers["accept-language"] }),
+    }),
+  );
 
-app.get("/", (req, res) =>
-  res.status(200).json({ message: "connection to server success" })
-);
+  await new Promise((resolve) => httpServer.listen({ port: Port }, resolve));
+  console.log(`🚀 Server ready at http://localhost:${Port}/graphql`);
+}
 
-//setting
-app.get("/setting/", (req, res) =>
-  res.status(200).json(db.findSetting(req.body.name))
-);
+ StartSever();
 
-//start app
-app.listen(3000, () => console.log("server started"));

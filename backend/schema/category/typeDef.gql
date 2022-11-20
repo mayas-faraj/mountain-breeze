@@ -1,0 +1,14 @@
+type Query {
+    getAllCategories: [Category]
+}
+
+type Category {
+id: ID
+name: String,
+img_src: String
+img_alt: String
+cost: Float
+room: [Room]
+}
+
+
