@@ -1,0 +1,20 @@
+.wrapper {
+  margin: auto 10px auto 0;
+  svg {
+    margin-top: 9px;
+  }
+}
+
+.wrapper--absolute {
+  position: absolute;
+  top: 15px;
+  right: 110px;
+}
+
+.menu > * {
+  padding: 4px !important;
+}
+
+.menu__image {
+  width: 32px;
+}

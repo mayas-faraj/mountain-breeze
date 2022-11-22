@@ -1,6 +1,7 @@
 import MainMenu from "./MainMenu"
 import LogoName from "./UI/LogoName"
 import BookNow from "./BookNow"
+import LanguageSwitcher from "./LanguageSwitcher"
 import styles from "../style/NavBar.module.scss"
 import {useEffect , useState} from "react"
 
@@ -26,6 +27,7 @@ const NavBar = (props)=>{
     return <div className={styles.navbar+" "+animation} onScroll={handleScroll}>
                 <MainMenu renderedClass={styles.mainmenu}/>
                 <LogoName width={200} height={40}/>
+                <LanguageSwitcher/>
                 <BookNow renderedClass={styles.booknow} text="Booking"/>
             </div>;
 }
