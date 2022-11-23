@@ -1,6 +1,5 @@
 type Query {
     getAllCategories: [Category]
-    rooms(category_id: Int): [Room]
 }
 
 type Category {
@@ -9,12 +8,6 @@ type Category {
   img_src: String
   img_alt: String
   cost: Float
-  room: [Room]
-}
-
-type Room {
-  number: String
-  is_available: Int
 }
 
 

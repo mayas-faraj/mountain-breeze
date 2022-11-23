@@ -1,5 +1,5 @@
 type Query {
-    getAllrooms: [Room]
+    getRoomsByCategoryId(categoryId: Int): [Room]
 }
 
 type Room {

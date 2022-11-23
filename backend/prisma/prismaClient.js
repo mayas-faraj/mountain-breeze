@@ -1,18 +1,18 @@
 const { PrismaClient } = require('@prisma/client')
 
-class prisma {
+class Prisma {
   constructor() {
-      if (!prisma.db) {
-          prisma.db = new PrismaClient();
+      if (!Prisma.db) {
+          Prisma.db = new PrismaClient();
       }
   }
 
   getInstance() {
-      return prisma.db;
+      return Prisma.db;
   }
   
   // multilanguage support
-  function localeDataMerge(data) {
+  static localeDataMerge(data) {
     if(Array.isArray(data))
       for(let i=0; i<data.length; i++)
         Object.keys(data[i]).filter(key=>key.startsWith("locale_")).forEach(key=>{
@@ -21,8 +21,6 @@ class prisma {
         });
     return data;
   }
-
-
 }
 
-module.exports = prisma;
+module.exports = Prisma;

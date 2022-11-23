@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "nodejs project to create backend system using prisma",
   "main": "server.js",
-  "type": "module",
   "prisma": {
     "seed": "node prisma/seeder.js"
   },
