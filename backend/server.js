@@ -1,42 +1,85 @@
-// import modules
-const express = require("express");
-const {graphqlHTTP} = require("express-graphql");
-const {buildSchema} = require("graphql");
-const PrismaClient=require("@prisma/client");
+//import modules
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { PrismaClient } from '@prisma/client';
 
-// create app
-const app = express();
+//setup prisma client
+const prismaClient = new PrismaClient();
 
-// define ql-schema
-let schema = buildSchema(`
+//graphql
+const typeDefs=`#graphql
   type Query {
-    setting: Setting!
+    categories: [Category]
+    rooms(category_id: Int): [Room]
   }
 
-  type Setting {
-    key(name:String): String!
-    value: String
-    info: Info
+  type Category {
+    id: ID
+    name: String,
+    img_src: String
+    img_alt: String
+    cost: Float
+    room: [Room]
   }
 
-  type Info {
-    creator: String
-    date: String
+  type Room {
+    number: String
+    is_available: Int
   }
-`);
+`;
 
-let root = { setting:(args)=>({key: "k0", value: JSON.stringify(args), info: {creator: "c1", date: "now"}}) };
+const resolvers={
+  Query: {
+    // { categories { name cost } }
+    categories: async(parent, args, context)=>{ 
+      const categories = await prismaClient.category.findMany({     
+        include: {
+          room: true,
+          locale_category: {
+            where: {
+              locale: {
+                name: context.language
+              }
+            }
+          }
+        }
+      });
 
-// routing
-app.get("/", (req, res) =>
-  res.status(200).json({ message: "connection to server success" })
-);
+      return localeDataMerge(categories);
+    },
+    // { rooms(category_id:3) { number is_available } }
+    rooms: async(parent, args, context)=>{
+      const rooms = await prismaClient.room.findMany({
+        where: {
+          category_id: args.category_id 
+        }
+      });
 
-app.use('/graphql-api', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
-  graphiql: true
-}));
+      return rooms;
+    }
+  }
+};
 
-// start app
-app.listen(3000, () => console.log("server started at: http://localhost:3000/graphql-api"));
+const appoloServer=new ApolloServer({
+  typeDefs,
+  resolvers
+});
+
+// multilanguage support
+function localeDataMerge(data) {
+  if(Array.isArray(data))
+    for(let i=0; i<data.length; i++)
+      Object.keys(data[i]).filter(key=>key.startsWith("locale_")).forEach(key=>{
+        if(data[i][key].length>0)
+          data[i]={...data[i], ...data[i][key][0]}
+      });
+  return data;
+}
+
+// start graphql server
+const { url } = await startStandaloneServer(appoloServer, {
+  listen: { port: 4000 },
+  context: async ({req, res})=>({language: req.headers['accept-language']})//req.headers["Accetp-Language"]})
+});
+
+console.log(`🚀Server ready at: ${url}`);
