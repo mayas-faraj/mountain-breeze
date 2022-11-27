@@ -1,13 +1,11 @@
-
-const prisma = require('../../prisma/prismaClient');
-const db = new prisma().getInstance();
+const Prisma = require('../../prisma/prismaClient');
+const db = new Prisma().getInstance();
 module.exports= {
   Query: {
-    // { categories { name cost } }
+    // { getAllCategories { name cost } }
     getAllCategories: async(parent, args, context)=>{ 
       const categories = await db.category.findMany({     
         include: {
-          room: true,
           locale_category: {
             where: {
               locale: {
@@ -18,7 +16,7 @@ module.exports= {
         }
       });
 
-      return prisma.localeDataMerge(categories);
+      return Prisma.localeDataMerge(categories);
     },
   }
 }

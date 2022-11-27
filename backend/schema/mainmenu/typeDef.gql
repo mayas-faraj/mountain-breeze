@@ -1,12 +1,15 @@
+type Query {
+    getMenuByName(name: String!): Menu
+}
+
 type Menu {
     name: String
+    menu_item: [Item]
 }
-input MenuInput {
-    name: String
-}
-type Query {
-    getMenuByID(id: ID!): Menu
-}
-type Mutation {
-    createMenu(menuInput: MenuInput): Menu!
+
+type Item {
+    title: String
+    icon: String
+    slug: String
+    url: String
 }

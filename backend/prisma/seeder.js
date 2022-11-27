@@ -387,12 +387,8 @@ async function createAll () {
     }
   ])
 
-  await createData('menu', [
-    { id: 1, name: 'main-menu' },
-    { id: 2, name: 'footer-menu' }
-  ])
-
   await createData('page', {
+    id: 1,
     slug: '/',
     feature_img_src: '/assets/imgs/covers/home-cover-wide.jpg',
     feature_img_alt: 'mountain breeze hotel',
@@ -467,6 +463,7 @@ async function createAll () {
   })
 
   await createData('page', {
+    id: 2,
     slug: 'contact',
     feature_img_src: '/assets/imgs/covers/contact-cover-wide.jpg',
     feature_img_alt: 'mountain breeze contact page',
@@ -501,6 +498,140 @@ async function createAll () {
                 img_alt: 'contact us'
               }
             ]
+          }
+        }
+      ]
+    }
+  })
+
+  await createData('page', {
+    id: 3,
+    slug: 'about',
+    feature_img_src: '/assets/imgs/covers/about-cover-wide.jpg',
+    feature_img_alt: 'mountain breeze about page',
+    og_image: '/assets/imgs/covers/about-cover.jpg',
+    locale_page: {
+      create: [
+        { locale_id: 1, title: 'About us' },
+        { locale_id: 2, title: 'حول المنتجع' }
+      ]
+    },
+    section: {
+      create: [
+        {
+          name: 'about-header',
+          display_order: 0,
+          locale_section: {
+            create: [
+              {
+                locale_id: 1,
+                content: 'Mountain breeze is a hotel, resturands, hals and so more.'
+              },
+              {
+                locale_id: 2,
+                content: 'نسمة جبل هو منتجع يتألف من مجموعة من المطاعم, القاعات والمسابح وغيرها.'
+              }
+            ]
+          },
+          section_image: {
+            create: [
+              {
+                img_src: '/assets/imgs/contact/aboutus.jpg',
+                img_alt: 'about us'
+              }
+            ]
+          }
+        }
+      ]
+    }
+  })
+
+  await createData('menu', {
+    name: 'main-menu',
+    menu_item: {
+      create: [
+        {
+          icon: "home",
+          display_order: 1,
+          locale_menu_item:  {
+            create: [
+              {
+                locale_id: 1,
+                title: "Home"
+              },
+              {
+                locale_id: 2,
+                title: "الرئيسية"
+              }
+            ]
+          },
+          menu_item_page: {
+            create: {
+              page_id: 1
+            }
+          }
+        },
+        {
+          icon: "info",
+          display_order: 2,
+          locale_menu_item:  {
+            create: [
+              {
+                locale_id: 1,
+                title: "About Us"
+              },
+              {
+                locale_id: 2,
+                title: "حول المنتجع"
+              }
+            ]
+          },
+          menu_item_page: {
+            create: {
+              page_id: 2
+            }
+          }
+        },
+        {
+          icon: "envelope",
+          display_order: 3,
+          locale_menu_item:  {
+            create: [
+              {
+                locale_id: 1,
+                title: "Contact us"
+              },
+              {
+                locale_id: 2,
+                title: "اتصل بنا"
+              }
+            ]
+          },
+          menu_item_page: {
+            create: {
+              page_id: 3
+            }
+          }
+        },
+        {
+          icon: "build",
+          display_order: 4,
+          locale_menu_item:  {
+            create: [
+              {
+                locale_id: 1,
+                title: "Download app"
+              },
+              {
+                locale_id: 2,
+                title: "تحميل التطبيق"
+              }
+            ]
+          },
+          menu_item_url: {
+            create: {
+              url: "https://play.google.com/mountain-breeze"
+            }
           }
         }
       ]
