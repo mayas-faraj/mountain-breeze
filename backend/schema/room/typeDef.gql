@@ -1,8 +1,0 @@
-type Query {
-    getRoomsByCategoryId(categoryId: Int): [Room]
-}
-
-type Room {
-    number: String
-    is_available: Int
-}
