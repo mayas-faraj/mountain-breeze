@@ -1,0 +1,347 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model booking {
+  id              Int               @id @default(autoincrement())
+  room_id         Int?
+  user_id         Int?
+  bill            Float?            @default(0) @db.Float
+  from_date       DateTime          @db.Date
+  duration        Int?              @default(1)
+  adultCount      Int?              @default(1)
+  childrenCount   Int?              @default(0)
+  infantsCount    Int?              @default(0)
+  status_id       Int?
+  room            room?             @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_ibfk_1")
+  user            user?             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_ibfk_2")
+  status          status?           @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_ibfk_3")
+  booking_service booking_service[]
+
+  @@index([room_id], map: "room_id")
+  @@index([status_id], map: "status_id")
+  @@index([user_id], map: "user_id")
+}
+
+model booking_service {
+  booking_id Int
+  service_id Int
+  booking    booking @relation(fields: [booking_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_service_ibfk_1")
+  service    service @relation(fields: [service_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_service_ibfk_2")
+
+  @@id([booking_id, service_id])
+  @@index([service_id], map: "service_id")
+}
+
+model category {
+  id              Int               @id @default(autoincrement())
+  img_src         String?           @db.VarChar(255)
+  img_alt         String?           @db.VarChar(80)
+  cost            Float             @db.Float
+  locale_category locale_category[]
+  room            room[]
+}
+
+model contact {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique(map: "name") @db.VarChar(100)
+  link      String? @db.VarChar(255)
+  icon      String? @db.VarChar(255)
+  is_social Int     @default(0)
+}
+
+model page {
+  id              Int              @id @default(autoincrement())
+  slug            String           @unique(map: "slug") @db.VarChar(255)
+  feature_img_src String           @db.VarChar(255)
+  feature_img_alt String           @db.VarChar(80)
+  og_image        String?          @db.VarChar(250)
+  locale_page     locale_page[]
+  menu_item_page  menu_item_page[]
+  section         section[]
+}
+
+model room {
+  id           Int       @id @default(autoincrement())
+  category_id  Int
+  number       String    @unique(map: "number") @db.VarChar(15)
+  is_available Int       @default(1)
+  category     category  @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "room_ibfk_1")
+  booking      booking[]
+
+  @@index([category_id], map: "category_id")
+}
+
+model section {
+  id             Int              @id @default(autoincrement())
+  name           String?          @db.VarChar(255)
+  page_id        Int?
+  display_order  Int?             @default(0)
+  button_link    String?          @db.VarChar(255)
+  page           page?            @relation(fields: [page_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "section_ibfk_1")
+  locale_section locale_section[]
+  section_image  section_image[]
+
+  @@unique([name, page_id], map: "name")
+  @@index([page_id], map: "page_id")
+}
+
+model section_image {
+  id                   Int                    @id @default(autoincrement())
+  img_src              String                 @db.VarChar(255)
+  img_alt              String                 @db.VarChar(80)
+  section_id           Int?
+  section              section?               @relation(fields: [section_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "section_image_ibfk_1")
+  locale_section_image locale_section_image[]
+
+  @@index([section_id], map: "section_id")
+}
+
+model service {
+  id              Int               @id @default(autoincrement())
+  cost            Float?            @default(0) @db.Float
+  img_src         String?           @db.VarChar(255)
+  img_alt         String?           @db.VarChar(80)
+  description     String?           @db.Text
+  booking_service booking_service[]
+  locale_service  locale_service[]
+}
+
+model setting {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique(map: "name") @db.VarChar(45)
+  value String? @db.VarChar(45)
+}
+
+model status {
+  id            Int             @id @default(autoincrement())
+  booking       booking[]
+  locale_status locale_status[]
+}
+
+model ticket {
+  id      Int      @id @default(autoincrement())
+  message String   @db.Text
+  sent_at DateTime @default(now()) @db.DateTime(0)
+  user_id Int?
+  user    user?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "ticket_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model type {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique(map: "name") @db.VarChar(50)
+  venue venue[]
+}
+
+model user {
+  id           Int       @id @default(autoincrement())
+  first_name   String    @db.VarChar(100)
+  last_name    String    @db.VarChar(100)
+  username     String    @db.VarChar(50)
+  password     String    @db.VarChar(50)
+  email        String?   @db.VarChar(50)
+  phone_number String    @unique(map: "phone_number") @db.VarChar(100)
+  is_disabled  Int?      @default(0)
+  booking      booking[]
+  ticket       ticket[]
+}
+
+model venue {
+  id           Int            @id @default(autoincrement())
+  type_id      Int?
+  slug         String         @unique(map: "slug") @db.VarChar(255)
+  contact      String?        @db.VarChar(45)
+  catalog_file String?        @db.VarChar(255)
+  type         type?          @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "venue_ibfk_1")
+  locale_venue locale_venue[]
+  venue_image  venue_image[]
+
+  @@index([type_id], map: "type_id")
+}
+
+model venue_image {
+  id                 Int                  @id @default(autoincrement())
+  img_src            String               @db.VarChar(255)
+  img_alt            String               @db.VarChar(80)
+  venue_id           Int?
+  venue              venue?               @relation(fields: [venue_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "venue_image_ibfk_1")
+  locale_venue_image locale_venue_image[]
+
+  @@index([venue_id], map: "venue_id")
+}
+
+model locale {
+  id                   Int                    @id @default(autoincrement())
+  name                 String?                @unique(map: "name") @db.Char(5)
+  currency_symbol      String?                @unique(map: "currency_symbol") @db.VarChar(10)
+  currency_rate        Float?                 @default(1) @db.Float
+  date_format          String?                @db.VarChar(20)
+  locale_category      locale_category[]
+  locale_menu_item     locale_menu_item[]
+  locale_page          locale_page[]
+  locale_section       locale_section[]
+  locale_section_image locale_section_image[]
+  locale_service       locale_service[]
+  locale_status        locale_status[]
+  locale_venue         locale_venue[]
+  locale_venue_image   locale_venue_image[]
+}
+
+model locale_category {
+  id          Int      @id @default(autoincrement())
+  locale_id   Int
+  category_id Int
+  name        String   @db.VarChar(100)
+  category    category @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_category_ibfk_1")
+  locale      locale   @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_category_ibfk_2")
+
+  @@unique([name, locale_id], map: "name")
+  @@index([category_id], map: "category_id")
+  @@index([locale_id], map: "locale_id")
+}
+
+model locale_menu_item {
+  id           Int       @id @default(autoincrement())
+  locale_id    Int
+  menu_item_id Int
+  title        String?   @db.VarChar(200)
+  menu_item    menu_item @relation(fields: [menu_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_menu_item_ibfk_1")
+  locale       locale    @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_menu_item_ibfk_2")
+
+  @@index([locale_id], map: "locale_id")
+  @@index([menu_item_id], map: "menu_item_id")
+}
+
+model locale_page {
+  id        Int    @id @default(autoincrement())
+  locale_id Int
+  page_id   Int
+  title     String @db.VarChar(255)
+  page      page   @relation(fields: [page_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_page_ibfk_1")
+  locale    locale @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_page_ibfk_2")
+
+  @@index([locale_id], map: "locale_id")
+  @@index([page_id], map: "page_id")
+}
+
+model locale_section {
+  id          Int     @id @default(autoincrement())
+  locale_id   Int
+  section_id  Int
+  content     String? @db.Text
+  button_text String? @db.VarChar(50)
+  section     section @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_section_ibfk_1")
+  locale      locale  @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_section_ibfk_2")
+
+  @@index([locale_id], map: "locale_id")
+  @@index([section_id], map: "section_id")
+}
+
+model locale_section_image {
+  id               Int           @id @default(autoincrement())
+  locale_id        Int
+  section_image_id Int
+  title            String?       @db.VarChar(100)
+  section_image    section_image @relation(fields: [section_image_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_section_image_ibfk_1")
+  locale           locale        @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_section_image_ibfk_2")
+
+  @@index([locale_id], map: "locale_id")
+  @@index([section_image_id], map: "section_image_id")
+}
+
+model locale_service {
+  id          Int     @id @default(autoincrement())
+  locale_id   Int
+  service_id  Int
+  name        String  @db.VarChar(100)
+  description String? @db.VarChar(300)
+  service     service @relation(fields: [service_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_service_ibfk_1")
+  locale      locale  @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_service_ibfk_2")
+
+  @@unique([name, locale_id], map: "name")
+  @@index([locale_id], map: "locale_id")
+  @@index([service_id], map: "service_id")
+}
+
+model locale_status {
+  id        Int    @id @default(autoincrement())
+  locale_id Int
+  status_id Int
+  name      String @db.VarChar(100)
+  status    status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_status_ibfk_1")
+  locale    locale @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_status_ibfk_2")
+
+  @@unique([name, locale_id], map: "name")
+  @@index([locale_id], map: "locale_id")
+  @@index([status_id], map: "status_id")
+}
+
+model locale_venue {
+  id          Int     @id @default(autoincrement())
+  locale_id   Int
+  venue_id    Int
+  name        String  @db.VarChar(45)
+  description String? @db.VarChar(45)
+  venue       venue   @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_venue_ibfk_1")
+  locale      locale  @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_venue_ibfk_2")
+
+  @@index([locale_id], map: "locale_id")
+  @@index([venue_id], map: "venue_id")
+}
+
+model locale_venue_image {
+  id             Int         @id @default(autoincrement())
+  locale_id      Int
+  venue_image_id Int
+  title          String?     @db.VarChar(100)
+  venue_image    venue_image @relation(fields: [venue_image_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_venue_image_ibfk_1")
+  locale         locale      @relation(fields: [locale_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locale_venue_image_ibfk_2")
+
+  @@index([locale_id], map: "locale_id")
+  @@index([venue_image_id], map: "venue_image_id")
+}
+
+model menu {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique(map: "name") @db.VarChar(100)
+  menu_item menu_item[]
+}
+
+model menu_item {
+  id               Int                @id @default(autoincrement())
+  parent_id        Int?
+  menu_id          Int
+  icon             String?            @db.VarChar(300)
+  display_order    Int?               @default(0)
+  menu_item        menu_item?         @relation("menu_itemTomenu_item", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "menu_item_ibfk_1")
+  menu             menu               @relation(fields: [menu_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "menu_item_ibfk_2")
+  locale_menu_item locale_menu_item[]
+  other_menu_item  menu_item[]        @relation("menu_itemTomenu_item")
+  menu_item_page   menu_item_page?
+  menu_item_url    menu_item_url?
+
+  @@index([menu_id], map: "menu_id")
+  @@index([parent_id], map: "parent_id")
+}
+
+model menu_item_page {
+  menu_item_id Int       @id
+  page_id      Int?
+  page         page?     @relation(fields: [page_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "menu_item_page_ibfk_1")
+  menu_item    menu_item @relation(fields: [menu_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "menu_item_page_ibfk_2")
+
+  @@index([page_id], map: "page_id")
+}
+
+model menu_item_url {
+  menu_item_id Int       @id
+  url          String?   @db.VarChar(250)
+  menu_item    menu_item @relation(fields: [menu_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "menu_item_url_ibfk_1")
+}

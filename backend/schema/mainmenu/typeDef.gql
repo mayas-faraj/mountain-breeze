@@ -1,0 +1,12 @@
+type Menu {
+    name: String
+}
+input MenuInput {
+    name: String
+}
+type Query {
+    getMenuByID(id: ID!): Menu
+}
+type Mutation {
+    createMenu(menuInput: MenuInput): Menu!
+}
